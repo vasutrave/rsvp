@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37"/>
+      <stop offset="50%" style="stop-color:#c9a962"/>
+      <stop offset="100%" style="stop-color:#b8860b"/>
+    </linearGradient>
+    <linearGradient id="burgundyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#722f37"/>
+      <stop offset="100%" style="stop-color:#5c252b"/>
+    </linearGradient>
+  </defs>
+  <!-- Ornate floral corner motif - Indian wedding style -->
+  <path d="M0 60 Q30 50 50 40 Q70 25 90 15 Q100 10 110 5 L120 0 L120 15 Q100 20 80 30 Q60 40 45 55 Q30 70 20 90 Q15 100 10 110 L0 120 Z" fill="url(#goldGrad)" opacity="0.4"/>
+  <path d="M0 80 Q25 65 45 50 Q65 35 85 25 Q95 20 105 18 L120 15 L120 35 Q100 40 80 50 Q60 60 45 75 Q30 90 20 105 L0 120 Z" fill="url(#burgundyGrad)" opacity="0.25"/>
+  <circle cx="15" cy="95" r="4" fill="url(#goldGrad)"/>
+  <circle cx="35" cy="75" r="3" fill="url(#goldGrad)"/>
+  <circle cx="55" cy="55" r="2.5" fill="url(#goldGrad)"/>
+  <path d="M0 100 Q20 85 40 70 Q55 58 70 50" stroke="url(#goldGrad)" stroke-width="1.5" fill="none" opacity="0.6"/>
+</svg>

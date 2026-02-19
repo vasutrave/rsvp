@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSVP - Varuni & Varun</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@300;400;600&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #17385e;
+      --navy:      #16385f;
+      --navy-mid:  #3c628f;
+      --gold:      #c9a96e;
+      --gold-lt:   #e0c898;
+      --gold-dk:   #a07830;
+      --cream:     #fdf6ec;
+      --ivory:     #fefaf4;
+      --text:      #0b1f3b;
+      --text-mid:  #16365d;
+      --muted:     rgba(11,31,59,0.92);
+      --border:    rgba(11,31,59,0.28);
+      --gborder:   rgba(201,169,110,0.35);
+    }
+
+    /* â”€â”€ Dark page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    html, body {
+      min-height: 100vh;
+      background-color: #10233f;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Noise grain */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* Radial depth */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("assets/first-page-bg.png");
+      background-size: 560px auto;
+      background-position: center top;
+      background-repeat: repeat;
+      opacity: 0.95;
+      pointer-events: none;
+    }
+
+    /* First page gets a single full background image (no tiling) */
+    body.intro-view::after {
+      background-image: url("assets/first-page-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 1;
+    }
+
+    body.no-view::after {
+      background-image: url("assets/second-page-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 1;
+    }
+
+    body.yes-view::after {
+      background-image: url("assets/third-page-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 1;
+    }
+
+    /* Gold sparkle dots tiled across page */
+    .sparkles {
+      display: none;
+      pointer-events: none;
+    }
+
+    /* â”€â”€ Fixed botanical decorations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .floral-tl {
+      display: none;
+    }
+
+    .floral-br { display: none; }
+
+    /* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .page {
+      position: relative; z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem 3.5rem;
+    }
+
+    /* â”€â”€ Cream card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .card {
+      width: 100%;
+      max-width: 920px;
+      background-color: #eff3fa;
+      background-image: url("assets/first-page-form.png");
+      background-size: 100% 100%;
+      background-position: center top;
+      background-repeat: no-repeat;
+      position: relative;
+      overflow: hidden;
+      z-index: 3;
+      box-shadow:
+        0 0 0 1px rgba(201,169,110,0.45),
+        0 40px 100px rgba(0,0,0,0.65),
+        0 10px 30px  rgba(0,0,0,0.35);
+      animation: riseIn 0.9s cubic-bezier(0.22,1,0.36,1) both;
+      padding: 1.5rem;
+    }
+
+    /* Page-specific full-card backgrounds */
+    body.intro-view .card {
+      background-image: url("assets/first-page-form.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #eff3fa;
+    }
+
+    body.no-view .card {
+      background-image: url("assets/second-page-form.png");
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #eff3fa;
+    }
+
+    body.yes-view .card {
+      background-image: url("assets/third-page-form.png");
+      background-size: 100% 100%;
+      background-position: center top;
+      background-repeat: no-repeat;
+    }
+
+    body.intro-view .card-inner {
+      padding-top: 5.6rem;
+    }
+
+    /* On intro page keep only one "Kindly Reply By" line */
+    body.intro-view .header .reply-label {
+      display: none;
+    }
+
+    body.yes-view .header .reply-label {
+      display: none;
+    }
+
+    body.no-view .header {
+      display: none;
+    }
+
+    body.intro-view .header {
+      margin-bottom: 1.1rem;
+    }
+
+    body.no-view .card-inner {
+      padding-top: 2.6rem;
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Inset gold border */
+    .card::after {
+      content: '';
+      position: absolute; inset: 8px;
+      border: 1px solid var(--gborder);
+      pointer-events: none; z-index: 0;
+    }
+
+    .card-inner {
+      width: calc(100% - 3.2rem);
+      margin: 0 auto;
+      padding: 3.8rem 4rem 3.6rem;
+      background: transparent;
+      border: none;
+      position: relative; z-index: 1;
+    }
+
+    /* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .header { text-align: center; margin-bottom: 1.75rem; }
+
+    .reply-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      color: var(--gold-dk);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .couple-names {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(3.1rem, 8vw, 4.1rem);
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--navy);
+    }
+
+    .couple-names .amp {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--gold);
+      font-size: 1.05em;
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(201,169,110,0.55), transparent);
+    }
+    .div-gem { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+    .celebration-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--text-mid);
+      margin-bottom: 0.3rem;
+    }
+
+    .celebration-dates {
+      font-size: 1.2rem;
+      color: var(--text-mid);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      font-style: italic;
+    }
+
+    /* â”€â”€ Section label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .field-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      margin-bottom: 0.7rem;
+      opacity: 1;
+    }
+
+    .form-section { margin-bottom: 1.75rem; }
+
+    /* Multi-page flow */
+    .flow-page { display: none; }
+    .flow-page.active { display: block; animation: riseIn 0.35s ease both; }
+
+    .invite-box {
+      max-width: 560px;
+      margin: 0 auto;
+      margin-top: 0.95rem;
+      min-height: 305px;
+      border: 1px solid var(--border);
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 1.35rem 1.85rem 1.2rem;
+      text-align: center;
+    }
+
+    .invite-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.8rem;
+      color: var(--navy);
+      font-weight: 700;
+      margin-bottom: 0.55rem;
+    }
+
+    .invite-sub {
+      font-size: 1.28rem;
+      color: var(--text-mid);
+      font-weight: 600;
+      margin-bottom: 0.95rem;
+      font-style: italic;
+    }
+
+    .invite-actions {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+      margin-top: 0.2rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .plain-choice {
+      border: 1px solid rgba(20,38,66,0.35);
+      background: rgba(255,255,255,0.28);
+      color: var(--text);
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1rem 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .plain-choice:hover {
+      background: rgba(22,56,95,0.92);
+      border-color: rgba(22,56,95,0.92);
+      color: var(--gold-lt);
+    }
+
+    #choose-no {
+      transition: transform 0.22s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      transform-origin: center;
+    }
+
+    .invite-bottom-reply {
+      margin-top: 0.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dk);
+      opacity: 1;
+    }
+
+    .emoji-fx {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.5);
+      font-size: clamp(2.2rem, 8vw, 4rem);
+      z-index: 1200;
+      pointer-events: none;
+      opacity: 0;
+      animation: emojiPop 780ms ease forwards;
+      text-shadow: 0 6px 25px rgba(0,0,0,0.25);
+    }
+
+    @keyframes emojiPop {
+      0%   { opacity: 0; transform: translate(-50%, -46%) scale(0.4); }
+      25%  { opacity: 1; transform: translate(-50%, -53%) scale(1.1); }
+      60%  { opacity: 1; transform: translate(-50%, -62%) scale(0.96); }
+      100% { opacity: 0; transform: translate(-50%, -78%) scale(0.85); }
+    }
+
+    .emoji-rain-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1150;
+      overflow: hidden;
+    }
+
+    .emoji-drop {
+      position: absolute;
+      top: -40px;
+      animation-name: emojiFall;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+      will-change: transform, opacity;
+    }
+
+    @keyframes emojiFall {
+      0%   { opacity: 0.96; transform: translateY(-40px) rotate(0deg); }
+      85%  { opacity: 0.95; }
+      100% { opacity: 0; transform: translateY(calc(100vh + 80px)) rotate(260deg); }
+    }
+
+    .decline-card {
+      max-width: 620px;
+      margin: 0 auto;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.16);
+      padding: 2.2rem 2rem 1.95rem;
+    }
+
+    .page-no-title {
+      text-align: center;
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      color: var(--navy);
+      margin-bottom: 1.1rem;
+      font-weight: 700;
+    }
+
+    .decline-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.6rem;
+      color: var(--navy);
+      margin-bottom: 0.55rem;
+    }
+
+    .decline-copy {
+      font-size: 1.24rem;
+      color: var(--text-mid);
+      font-style: normal;
+      font-weight: 600;
+      margin-bottom: 1.1rem;
+    }
+
+    .ghost-btn {
+      border: 1px solid rgba(20,38,66,0.3);
+      background: transparent;
+      color: var(--text-mid);
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      margin-top: 0.6rem;
+    }
+
+    .decline-form {
+      text-align: left;
+      margin-top: 0.85rem;
+    }
+
+    .decline-form .field-label {
+      font-size: 0.78rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .decline-submit-wrap {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .decline-success {
+      display: none;
+      margin-top: 0.85rem;
+      text-align: center;
+      font-size: 1.08rem;
+      color: var(--text-mid);
+      font-weight: 600;
+    }
+
+    .decline-success.show {
+      display: block;
+    }
+
+    /* â”€â”€ Attendance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .attend-question {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .attend-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      min-height: 48px;
+    }
+
+    .btn-yes {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 0.85rem 0.75rem;
+      background: var(--navy);
+      border: 1px solid var(--navy);
+      color: var(--gold);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-yes:not(.selected) {
+      background: transparent;
+      border-color: rgba(13,27,42,0.3);
+      color: var(--navy);
+    }
+
+    .btn-yes:hover, .btn-yes.selected {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--gold);
+    }
+
+    /* No button container fills the right cell */
+    .btn-no-wrapper {
+      position: relative;
+      min-height: 44px;
+    }
+
+    .btn-no {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.85rem 0.75rem;
+      background: transparent;
+      border: 1px solid rgba(13,27,42,0.22);
+      color: var(--muted);
+      cursor: pointer;
+      transition: left 0.15s ease-out, top 0.15s ease-out;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .btn-no:hover { border-color: rgba(13,27,42,0.4); color: var(--text); }
+    .attending-hidden { display: none; }
+
+    /* â”€â”€ Name â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .input-wrap { position: relative; }
+
+    input[type="text"] {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.34rem;
+      font-style: italic;
+      padding: 0.6rem 2rem 0.6rem 0;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+
+    input[type="text"]:focus { border-bottom-color: var(--gold); }
+    input[type="text"]::placeholder { color: rgba(11,31,59,0.68); }
+
+    .input-suffix {
+      position: absolute; right: 0; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); pointer-events: none;
+    }
+
+    /* â”€â”€ Event cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .events-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .event-check { position: relative; }
+    .event-check input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+
+    .event-check label {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.72rem 0.9rem;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+    }
+
+    .event-check label:hover { border-color: var(--gborder); }
+
+    .event-check input:checked + label {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.07);
+    }
+
+    .ev-icon {
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--gold); opacity: 0.6;
+      transition: opacity 0.25s;
+    }
+
+    .event-check input:checked + label .ev-icon { opacity: 1; }
+
+    .ev-info { flex: 1; display: flex; flex-direction: column; gap: 0.12rem; }
+
+    .ev-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .ev-date { font-size: 1.12rem; color: var(--text-mid); font-style: italic; font-weight: 600; }
+
+    /* Circle radio indicator on right */
+    .ev-indicator {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(13,27,42,0.2);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.2s;
+    }
+
+    .ev-indicator::after {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      transform: scale(0);
+      transition: transform 0.2s;
+    }
+
+    .event-check input:checked + label .ev-indicator { border-color: var(--gold); }
+    .event-check input:checked + label .ev-indicator::after { transform: scale(1); }
+
+    /* â”€â”€ Accommodation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .radio-row { display: flex; gap: 0.7rem; }
+
+    .radio-pill { position: relative; flex: 1; }
+    .radio-pill input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+
+    .radio-pill label {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: all 0.25s;
+    }
+
+    .radio-pill input:checked + label {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--gold);
+    }
+
+    .radio-pill label:hover { border-color: var(--navy-mid); color: var(--text); }
+
+    /* â”€â”€ Arrival / departure pair â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .date-pair {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      border: 1px solid var(--border);
+    }
+
+    .date-cell { padding: 0.8rem 1rem; display: flex; flex-direction: column; gap: 0.25rem; }
+
+    .date-cell-divider { background: var(--border); }
+
+    .date-tiny {
+      font-family: 'Cinzel', serif;
+      font-size: 0.76rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input[type="date"], input.date-text {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.24rem;
+      font-style: italic;
+      outline: none;
+      color-scheme: light;
+      cursor: pointer;
+      width: 100%;
+      padding: 0;
+    }
+
+    .ui-datepicker {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      border: 1px solid rgba(11,31,59,0.28);
+    }
+
+    /* â”€â”€ Guest stepper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+
+    #guest-section {
+      text-align: center;
+    }
+
+    .step-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      color: var(--navy);
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: all 0.2s;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .step-btn:last-child { border-right: none; border-left: 1px solid var(--border); }
+    .step-btn:hover { background: var(--navy); color: var(--gold); }
+
+    .guest-display {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+      padding: 0 1.25rem;
+      min-width: 100px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* â”€â”€ Message textarea â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.24rem;
+      font-style: italic;
+      padding: 0.75rem 1rem;
+      outline: none;
+      resize: none;
+      height: 82px;
+      transition: border-color 0.25s;
+    }
+
+    /* Subtle readability panel only on long RSVP form page */
+    body.yes-view #formContent {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(11,31,59,0.2);
+      padding: 1rem 1rem 0.4rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    textarea:focus { border-color: var(--gold); }
+    textarea::placeholder { color: var(--muted); }
+
+    /* â”€â”€ Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .submit-wrap {
+      margin-top: 1.9rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(13,27,42,0.1);
+      text-align: center;
+    }
+
+    .btn-submit {
+      width: auto;
+      min-width: 260px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.76rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      padding: 0.88rem 1.3rem;
+      background: var(--navy);
+      border: none;
+      color: var(--gold);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      transition: color 0.35s;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--gold-dk), var(--gold));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .btn-submit:hover::before { transform: scaleX(1); }
+    .btn-submit:hover { color: var(--navy); }
+    .btn-submit > * { position: relative; z-index: 1; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .footer-line {
+      text-align: center;
+      font-size: 1.25rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    /* â”€â”€ Success â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .success { display: none; text-align: center; padding: 3rem 0 1.5rem; }
+    .success.show { display: block; animation: riseIn 0.6s ease both; }
+    .form-content.hide { display: none; }
+
+    .success-glyph { font-size: 2rem; color: var(--gold); margin-bottom: 1.25rem; }
+
+    .success h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .success p { font-size: 1.12rem; color: var(--muted); font-style: italic; line-height: 1.8; }
+
+    #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
+
+    /* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    @media (max-width: 1080px) {
+      .card { max-width: 860px; }
+      .card-inner {
+        width: calc(100% - 2.2rem);
+        padding: 3rem 2.7rem 3.1rem;
+      }
+      .floral-tl  { width: 160px; }
+      .floral-br  { width: 180px; }
+    }
+
+    @media (max-width: 420px) {
+      .card { padding: 0.9rem; }
+      .card-inner {
+        width: calc(100% - 1.4rem);
+        padding: 2.2rem 1.35rem;
+      }
+      .attend-row { grid-template-columns: 1fr; }
+      .btn-no-wrapper { height: 48px; }
+      .invite-actions { grid-template-columns: 1fr; }
+      .btn-submit { width: 100%; min-width: 0; }
+    }
+
+    @media (max-width: 380px) {
+      .attend-row { grid-template-columns: 1fr; }
+      .btn-no-wrapper { height: 44px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- â–‘â–‘â–‘ GOLD SPARKLE TILE â–‘â–‘â–‘ -->
+  <div class="sparkles"></div>
+
+  <!-- â–‘â–‘â–‘ TOP-LEFT GOLD LINE-ART BOTANICAL â–‘â–‘â–‘ -->
+  <svg class="floral-tl" viewBox="0 0 280 310" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#c9a96e" fill="none" opacity="1">
+      <!-- Main arching stem -->
+      <path d="M15 308 Q65 250 115 195 Q155 150 195 115" stroke-width="1.3" opacity="0.65"/>
+      <!-- Side branch lower -->
+      <path d="M75 258 Q58 230 52 208" stroke-width="1" opacity="0.58"/>
+      <!-- Side branch mid -->
+      <path d="M138 185 Q128 158 122 140" stroke-width="1" opacity="0.58"/>
+      <!-- Stem to flower -->
+      <path d="M195 115 Q208 105 218 95" stroke-width="1.1" opacity="0.65"/>
+
+      <!-- LARGE CHRYSANTHEMUM at (230, 78) -->
+      <g transform="translate(230,78)">
+        <!-- Outer ring â€“ 20 thin petals -->
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(18)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(36)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(54)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(108)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(126)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(162)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(198)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(234)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(252)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(288)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(306)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(324)"/>
+        <ellipse cx="0" cy="-42" rx="4"   ry="20" stroke-width="0.85" opacity="0.78" transform="rotate(342)"/>
+        <!-- Inner ring â€“ 20 shorter petals, offset by 9Â° -->
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(9)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(27)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(63)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(81)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(99)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(117)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(153)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(171)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(189)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(207)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(243)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(261)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(279)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(297)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(315)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(333)"/>
+        <ellipse cx="0" cy="-27" rx="3.5" ry="13" stroke-width="0.75" opacity="0.65" transform="rotate(351)"/>
+        <!-- Centre -->
+        <circle r="10" stroke-width="0.9" opacity="0.75"/>
+        <circle r="5"  stroke-width="0.7" opacity="0.65" fill="rgba(201,169,110,0.08)"/>
+        <!-- Stamens -->
+        <line x1="0" y1="-5"  x2=" 0" y2="-9"  stroke-width="0.6" opacity="0.5"/>
+        <line x1="3" y1="-4"  x2=" 5" y2="-8"  stroke-width="0.6" opacity="0.5"/>
+        <line x1="-3" y1="-4" x2="-5" y2="-8"  stroke-width="0.6" opacity="0.5"/>
+      </g>
+
+      <!-- SMALL BUD (lower branch) at (52,208) -->
+      <g transform="translate(52,208)">
+        <path d="M0 0 Q-7-8 0-16 Q7-8 0 0" stroke-width="1" opacity="0.65"/>
+        <path d="M-4-7 Q0-13 4-7" stroke-width="0.75" opacity="0.55"/>
+        <circle cx="0" cy="-19" r="5" stroke-width="0.9" opacity="0.65"/>
+        <!-- Sepal lines -->
+        <path d="M-3-2 Q-6 2-5 6" stroke-width="0.7" opacity="0.5"/>
+        <path d="M3-2  Q6 2 5 6" stroke-width="0.7" opacity="0.5"/>
+      </g>
+
+      <!-- SMALL FLOWER (mid branch) at (122,140) -->
+      <g transform="translate(122,140)">
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(0)"/>
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-22" rx="3" ry="10" stroke-width="0.8" opacity="0.7" transform="rotate(315)"/>
+        <circle r="6" stroke-width="0.8" opacity="0.65"/>
+      </g>
+
+      <!-- Leaves -->
+      <path d="M75 258 Q50 240 48 220 Q62 226 75 258" stroke-width="1" opacity="0.62"/>
+      <path d="M62 240 Q55 232 51 224" stroke-width="0.5" opacity="0.45"/> <!-- vein -->
+      <path d="M138 185 Q112 168 110 148 Q122 155 138 185" stroke-width="1" opacity="0.62"/>
+      <path d="M125 170 Q118 163 114 155" stroke-width="0.5" opacity="0.45"/>
+      <path d="M195 115 Q175 100 177 82 Q186 90 195 115" stroke-width="1" opacity="0.6"/>
+      <path d="M205 115 Q224 100 226 83 Q216 90 205 115" stroke-width="1" opacity="0.58"/>
+      <!-- Small scattered leaves -->
+      <path d="M168 148 Q158 135 162 122 Q170 130 168 148" stroke-width="0.9" opacity="0.55"/>
+      <path d="M105 220 Q88 208 90 194 Q98 202 105 220" stroke-width="0.9" opacity="0.55"/>
+
+      <!-- Gold dot accents -->
+      <circle cx="170" cy="142" r="2"   fill="#c9a96e" stroke="none" opacity="0.38"/>
+      <circle cx="255" cy="32"  r="1.8" fill="#c9a96e" stroke="none" opacity="0.32"/>
+      <circle cx="280" cy="58"  r="1.5" fill="#c9a96e" stroke="none" opacity="0.28"/>
+      <circle cx="45"  cy="270" r="1.5" fill="#c9a96e" stroke="none" opacity="0.32"/>
+      <circle cx="200" cy="108" r="1.2" fill="#c9a96e" stroke="none" opacity="0.28"/>
+    </g>
+  </svg>
+
+  <!-- â–‘â–‘â–‘ BOTTOM-RIGHT COLORFUL ROSE CLUSTER â–‘â–‘â–‘ -->
+  <svg class="floral-br" viewBox="0 0 340 295" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="rd1" cx="40%" cy="35%" r="65%">
+        <stop offset="0%"  stop-color="#9a2038"/>
+        <stop offset="100%" stop-color="#5a0d1c"/>
+      </radialGradient>
+      <radialGradient id="rd2" cx="40%" cy="35%" r="65%">
+        <stop offset="0%"  stop-color="#7a1828"/>
+        <stop offset="100%" stop-color="#430a12"/>
+      </radialGradient>
+      <radialGradient id="rp1" cx="40%" cy="35%" r="65%">
+        <stop offset="0%"  stop-color="#d86880"/>
+        <stop offset="100%" stop-color="#a03050"/>
+      </radialGradient>
+      <radialGradient id="rp2" cx="40%" cy="35%" r="65%">
+        <stop offset="0%"  stop-color="#c05068"/>
+        <stop offset="100%" stop-color="#882040"/>
+      </radialGradient>
+      <radialGradient id="rm1" cx="40%" cy="35%" r="65%">
+        <stop offset="0%"  stop-color="#dca0b0"/>
+        <stop offset="100%" stop-color="#b06878"/>
+      </radialGradient>
+      <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"  stop-color="#3a7848"/>
+        <stop offset="100%" stop-color="#1a4828"/>
+      </linearGradient>
+      <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"  stop-color="#2e6038"/>
+        <stop offset="100%" stop-color="#143818"/>
+      </linearGradient>
+    </defs>
+
+    <!-- â”€â”€ Leaves (drawn first, behind roses) â”€â”€ -->
+    <!-- Large leaf 1 â€“ left sweeping -->
+    <path d="M110 200 Q60 158 68 118 Q88 135 110 200" fill="url(#lg1)" opacity="0.9"/>
+    <path d="M110 200 Q74 160 72 128" stroke="#1a4828" stroke-width="0.8" fill="none" opacity="0.5"/>
+    <!-- Large leaf 2 â€“ right side -->
+    <path d="M220 220 Q270 175 268 138 Q248 154 220 220" fill="url(#lg1)" opacity="0.88"/>
+    <path d="M220 220 Q264 178 266 145" stroke="#1a4828" stroke-width="0.8" fill="none" opacity="0.5"/>
+    <!-- Medium leaf 3 -->
+    <path d="M158 240 Q118 208 122 182 Q138 196 158 240" fill="url(#lg2)" opacity="0.85"/>
+    <!-- Medium leaf 4 â€“ upper right -->
+    <path d="M250 158 Q295 118 295 92 Q278 108 250 158" fill="url(#lg1)" opacity="0.82"/>
+    <!-- Small leaves -->
+    <path d="M80 188 Q58 170 62 152 Q72 163 80 188" fill="url(#lg2)" opacity="0.8"/>
+    <path d="M285 200 Q320 172 322 150 Q308 162 285 200" fill="url(#lg2)" opacity="0.78"/>
+    <path d="M140 265 Q112 248 116 232 Q128 240 140 265" fill="url(#lg1)" opacity="0.78"/>
+
+    <!-- Stems -->
+    <path d="M162 290 Q158 250 155 215" stroke="#1d4a25" stroke-width="2" fill="none" opacity="0.6"/>
+    <path d="M240 285 Q240 255 235 225" stroke="#1d4a25" stroke-width="1.5" fill="none" opacity="0.55"/>
+
+    <!-- â”€â”€ LARGE BURGUNDY ROSE (centre) ~(165,175) â”€â”€ -->
+    <g transform="translate(165,175)">
+      <!-- Sepals -->
+      <path d="M-14 26 Q-22 36-8 40 Q0 43 8 40 Q22 36 14 26 Z" fill="#1a4828"/>
+      <!-- Outermost petals -->
+      <path d="M0 6 C-44-4-42-44 0-40 C42-44 44-4 0 6" fill="url(#rd2)"/>
+      <path d="M0 6 C-56 6-54-26-26-42 C-10-50 0-38 0 6" fill="#620f1e" opacity="0.92"/>
+      <path d="M0 6 C56 6 54-26 26-42 C10-50 0-38 0 6"  fill="#620f1e" opacity="0.92"/>
+      <!-- Mid outer petals -->
+      <path d="M0 2 C-36-4-34-36 0-32 C34-36 36-4 0 2" fill="url(#rd1)"/>
+      <path d="M0 2 C-44 2-42-22-22-36 C-8-44 0-30 0 2" fill="#7e1828" opacity="0.92"/>
+      <path d="M0 2 C44 2 42-22 22-36 C8-44 0-30 0 2"  fill="#7e1828" opacity="0.92"/>
+      <!-- Inner petals -->
+      <path d="M0-6 C-26-10-24-32 0-28 C24-32 26-10 0-6" fill="#8e2232"/>
+      <path d="M0-6 C-32-6-30-24-14-32 C-4-38 0-26 0-6" fill="#7a1c28" opacity="0.9"/>
+      <path d="M0-6 C32-6 30-24 14-32 C4-38 0-26 0-6"  fill="#7a1c28" opacity="0.9"/>
+      <!-- Innermost / centre bud -->
+      <path d="M0-14 C-16-16-14-28 0-24 C14-28 16-16 0-14" fill="#9c2838"/>
+      <ellipse cx="0" cy="-26" rx="10" ry="9" fill="#3e0a12"/>
+      <ellipse cx="0" cy="-26" rx="7"  ry="6" fill="#2a0608"/>
+    </g>
+
+    <!-- â”€â”€ MEDIUM PINK ROSE (left) ~(105,218) â”€â”€ -->
+    <g transform="translate(105,218) scale(0.78)">
+      <path d="M-12 22 Q-20 30-7 34 Q0 36 7 34 Q20 30 12 22 Z" fill="#1a4828"/>
+      <path d="M0 5 C-40-4-38-40 0-36 C38-40 40-4 0 5" fill="url(#rp2)"/>
+      <path d="M0 5 C-50 5-48-24-24-38 C-8-46 0-34 0 5" fill="#a82848" opacity="0.9"/>
+      <path d="M0 5 C50 5 48-24 24-38 C8-46 0-34 0 5"  fill="#a82848" opacity="0.9"/>
+      <path d="M0 0 C-30-4-28-32 0-28 C28-32 30-4 0 0" fill="url(#rp1)"/>
+      <path d="M0 0 C-38 0-36-20-18-32 C-6-40 0-26 0 0" fill="#b83860" opacity="0.88"/>
+      <path d="M0 0 C38 0 36-20 18-32 C6-40 0-26 0 0"  fill="#b83860" opacity="0.88"/>
+      <path d="M0-8 C-22-12-20-28 0-24 C20-28 22-12 0-8" fill="#c84870"/>
+      <ellipse cx="0" cy="-22" rx="9" ry="8" fill="#6e1030"/>
+      <ellipse cx="0" cy="-22" rx="6" ry="5" fill="#4e0820"/>
+    </g>
+
+    <!-- â”€â”€ SMALL MAUVE ROSE (far left) ~(62,248) â”€â”€ -->
+    <g transform="translate(62,248) scale(0.55)">
+      <path d="M0 4 C-34-4-32-36 0-32 C32-36 34-4 0 4" fill="url(#rm1)"/>
+      <path d="M0 4 C-42 4-40-20-20-34 C-7-42 0-28 0 4" fill="#c07888" opacity="0.9"/>
+      <path d="M0 4 C42 4 40-20 20-34 C7-42 0-28 0 4"  fill="#c07888" opacity="0.9"/>
+      <path d="M0-4 C-24-8-22-26 0-22 C22-26 24-8 0-4" fill="#d49aaa"/>
+      <ellipse cx="0" cy="-20" rx="8" ry="7" fill="#8a4058"/>
+      <ellipse cx="0" cy="-20" rx="5" ry="4" fill="#6a2840"/>
+    </g>
+
+    <!-- â”€â”€ SMALL BUD (right side) ~(268,228) â”€â”€ -->
+    <g transform="translate(268,228) scale(0.45)">
+      <path d="M0 4 C-30-3-28-32 0-28 C28-32 30-3 0 4" fill="url(#rd1)"/>
+      <path d="M0-2 C-18-6-16-24 0-20 C16-24 18-6 0-2" fill="#8e2030"/>
+      <ellipse cx="0" cy="-18" rx="7" ry="6" fill="#3e0810"/>
+      <!-- Sepals -->
+      <path d="M-8 4 Q-14 12-6 14 Q0 16 6 14 Q14 12 8 4" fill="#1a4828"/>
+    </g>
+
+    <!-- Gold sparkle dots -->
+    <circle cx="142" cy="155" r="2.5" fill="#c9a96e" opacity="0.55"/>
+    <circle cx="198" cy="138" r="1.8" fill="#c9a96e" opacity="0.45"/>
+    <circle cx="232" cy="168" r="2"   fill="#c9a96e" opacity="0.5"/>
+    <circle cx="88"  cy="172" r="1.5" fill="#c9a96e" opacity="0.4"/>
+    <circle cx="310" cy="145" r="2"   fill="#c9a96e" opacity="0.42"/>
+    <circle cx="178" cy="148" r="1.2" fill="#c9a96e" opacity="0.38"/>
+    <circle cx="125" cy="198" r="1.5" fill="#c9a96e" opacity="0.4"/>
+  </svg>
+
+  <!-- â–‘â–‘â–‘ CREAM RSVP CARD â–‘â–‘â–‘ -->
+  <div class="page">
+    <div class="card">
+      <div class="card-inner">
+        <!-- Header -->
+        <div class="header">
+          <p class="reply-label">Kindly Reply By March 15, 2026</p>
+          <h1 class="couple-names">Varuni <span class="amp">&amp;</span> Varun</h1>
+          <div class="divider"><span class="div-gem"></span></div>
+          <p class="celebration-title">Wedding Celebrations</p>
+          <p class="celebration-dates">
+            25 &amp; 26 April 2026 | Kalaburagi &nbsp;|&nbsp; Reception | 1 May 2026 | Bengaluru
+          </p>
+        </div>
+
+        <div class="flow-page active" id="page-intro">
+          <div class="invite-box">
+            <p class="reply-label">The Wedding Invitation</p>
+            <h2 class="invite-title">Will you be joining us?</h2>
+            <p class="invite-sub">Please choose an option to continue</p>
+            <div class="invite-actions">
+              <button type="button" class="plain-choice" id="choose-yes">Yes, I will join</button>
+              <button type="button" class="plain-choice" id="choose-no">No, I can't join</button>
+            </div>
+            <p class="invite-bottom-reply">Kindly Reply By March 15, 2026</p>
+          </div>
+        </div>
+
+        <div class="flow-page" id="page-no">
+          <h2 class="page-no-title">We'll miss you :(</h2>
+          <div class="decline-card">
+            <form id="declineForm"
+                  class="decline-form"
+                  action="https://docs.google.com/forms/d/e/1FAIpQLSeNS8bNMZ8BWRgN9w5oUHEDpHOF7ojSw-1QuKvU2nodQlSaDw/formResponse"
+                  method="POST"
+                  target="hidden-iframe">
+              <!-- Replace with your attendance field entry ID -->
+              <input type="hidden" name="entry.XXXXX" value="Sorry, can't make it">
+
+              <div class="form-section" style="margin-bottom:1rem;">
+                <label class="field-label" for="declineName">Your Name</label>
+                <div class="input-wrap">
+                  <input type="text" id="declineName" name="entry.XXXXX" placeholder="Enter your full name" required>
+                </div>
+              </div>
+
+              <div class="form-section" style="margin-bottom:1rem;">
+                <label class="field-label" for="declineMsg">Would you like to leave a message? (optional)</label>
+                <textarea id="declineMsg" name="entry.XXXXX" placeholder="Your message"></textarea>
+              </div>
+
+              <div class="decline-submit-wrap">
+                <button type="submit" class="ghost-btn" id="decline-submit">Submit</button>
+              </div>
+              <p id="decline-success" class="decline-success">Thank you for letting us know.</p>
+            </form>
+          </div>
+        </div>
+
+        <div class="flow-page" id="page-yes">
+          <div class="form-content" id="formContent">
+            <form id="rsvpForm"
+                  action="https://docs.google.com/forms/d/e/1FAIpQLSeNS8bNMZ8BWRgN9w5oUHEDpHOF7ojSw-1QuKvU2nodQlSaDw/formResponse"
+                  method="POST"
+                  target="hidden-iframe">
+              <!-- Replace every entry.XXXXX with your Google Form entry IDs -->
+              <!-- This Google Form feed acts as your backend sheet (exportable to CSV/Excel). -->
+              <input type="hidden" name="entry.XXXXX" id="attending-value" value="Yes, I'll be there">
+
+              <!-- 1. Name -->
+            <div class="form-section">
+              <label class="field-label" for="guestName">Your Name</label>
+              <div class="input-wrap">
+                <input type="text" id="guestName" name="entry.XXXXX" placeholder="Enter your full name" required>
+                <span class="input-suffix">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <!-- 2. Events -->
+            <div class="form-section">
+              <label class="field-label">Which Events Will You Be Attending?</label>
+              <div class="events-list">
+
+                <div class="event-check">
+                  <input type="checkbox" id="evt1" name="entry.XXXXX" value="Wedding Celebrations - 25 April 2026 - Kalaburagi">
+                  <label for="evt1">
+                    <div class="ev-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M8 22V12M16 22V12M3 12h18M5 12l2-8h10l2 8"/>
+                      </svg>
+                    </div>
+                    <div class="ev-info">
+                      <span class="ev-name">Reception</span>
+                      <span class="ev-date">25 April 2026 | Kalaburagi</span>
+                    </div>
+                    <div class="ev-indicator"></div>
+                  </label>
+                </div>
+
+                <div class="event-check">
+                  <input type="checkbox" id="evt2" name="entry.XXXXX" value="Wedding Celebrations - 26 April 2026 - Kalaburagi">
+                  <label for="evt2">
+                    <div class="ev-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M12 10v11M16 10v11"/>
+                      </svg>
+                    </div>
+                    <div class="ev-info">
+                      <span class="ev-name">Muhuratam</span>
+                      <span class="ev-date">26 April 2026 | Kalaburagi</span>
+                    </div>
+                    <div class="ev-indicator"></div>
+                  </label>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 3. Accommodation -->
+            <div class="form-section" id="accommodation-section">
+              <label class="field-label">Would You Require Accommodation?</label>
+              <div class="radio-row">
+                <div class="radio-pill">
+                  <input type="radio" name="entry.XXXXX" id="acc-yes" value="Yes">
+                  <label for="acc-yes">Yes, Please</label>
+                </div>
+                <div class="radio-pill">
+                  <input type="radio" name="entry.XXXXX" id="acc-no" value="No">
+                  <label for="acc-no">No, Thank You</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Arrival & Departure -->
+            <div class="form-section">
+              <label class="field-label">Arrival &amp; Departure</label>
+              <div class="date-pair">
+                <div class="date-cell">
+                  <span class="date-tiny">Arrival Date</span>
+                  <input type="text" class="date-text js-datepicker" id="arrival" name="entry.XXXXX" placeholder="dd/mm/yyyy" autocomplete="off">
+                </div>
+                <div class="date-cell-divider"></div>
+                <div class="date-cell">
+                  <span class="date-tiny">Departure Date</span>
+                  <input type="text" class="date-text js-datepicker" id="departure" name="entry.XXXXX" placeholder="dd/mm/yyyy" autocomplete="off">
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Guest stepper -->
+            <div class="form-section" id="guest-section">
+              <label class="field-label">Number of Guests</label>
+              <div class="stepper">
+                <button type="button" class="step-btn" id="dec-btn">-</button>
+                <span class="guest-display" id="guest-display">1 Guest</span>
+                <button type="button" class="step-btn" id="inc-btn">+</button>
+              </div>
+              <input type="hidden" name="entry.XXXXX" id="guest-val" value="1">
+            </div>
+
+            <!-- 6. Submit -->
+            <div class="submit-wrap">
+              <button type="submit" class="btn-submit" id="btn-submit">
+                <span>Send RSVP</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+              <p class="footer-line">We look forward to celebrating with you!</p>
+            </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Success state -->
+        <div class="success" id="successMsg">
+          <div class="success-glyph">✦</div>
+          <h2>Thank you!</h2>
+          <p>Your RSVP has been received.<br>We look forward to celebrating with you.</p>
+          <div class="divider" style="margin-top:1.5rem"><span class="div-gem"></span></div>
+          <p class="footer-line" style="margin-top:1rem">Varuni &amp; Varun | April-May 2026</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <iframe name="hidden-iframe" style="display:none;"></iframe>
+  <canvas id="confetti-canvas"></canvas>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  /* Refs */
+  const pageIntro    = document.getElementById('page-intro');
+  const pageNo       = document.getElementById('page-no');
+  const pageYes      = document.getElementById('page-yes');
+  const chooseYes    = document.getElementById('choose-yes');
+  const chooseNo     = document.getElementById('choose-no');
+  const declineForm  = document.getElementById('declineForm');
+  const declineSuccess = document.getElementById('decline-success');
+  const form         = document.getElementById('rsvpForm');
+  const formContent  = document.getElementById('formContent');
+  const successMsg   = document.getElementById('successMsg');
+  const canvas       = document.getElementById('confetti-canvas');
+  const guestDisplay = document.getElementById('guest-display');
+  const guestVal     = document.getElementById('guest-val');
+  const decBtn       = document.getElementById('dec-btn');
+  const incBtn       = document.getElementById('inc-btn');
+  const attendingVal = document.getElementById('attending-value');
+  const happyAudioSrc = 'assets/happy sound.mp3';
+  const sadAudioSrc   = 'assets/sad sound.mp3';
+
+  let guestCount = 1;
+  let noScaleStep = 0;
+  let noShrinkTimer = null;
+  let introChoiceLocked = false;
+  let emojiRainTimer = null;
+  let emojiRainLayer = null;
+  let confettiActive = false;
+  let confettiRAF = null;
+  let confettiBits = [];
+
+  function showPage(el) {
+    [pageIntro, pageNo, pageYes].forEach(function(p) { p.classList.remove('active'); });
+    el.classList.add('active');
+    document.body.classList.remove('intro-view', 'no-view', 'yes-view');
+    if (el === pageIntro) document.body.classList.add('intro-view');
+    if (el === pageNo) document.body.classList.add('no-view');
+    if (el === pageYes) document.body.classList.add('yes-view');
+  }
+
+  function initDatePickers() {
+    if (!window.jQuery || !window.jQuery.fn || !window.jQuery.fn.datepicker) return;
+    const $ = window.jQuery;
+    $('.js-datepicker').each(function() {
+      const opts = {
+        dateFormat: 'dd/mm/yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: '1900:2100'
+      };
+      $(this).datepicker(opts);
+    });
+  }
+
+  function playAudioAndWait(src, fallbackMs) {
+    return new Promise(function(resolve) {
+      const audio = new Audio(src);
+      let done = false;
+      const finish = function() {
+        if (done) return;
+        done = true;
+        audio.onended = null;
+        audio.onerror = null;
+        resolve();
+      };
+      const timer = window.setTimeout(finish, fallbackMs || 2400);
+      audio.onended = function() { window.clearTimeout(timer); finish(); };
+      audio.onerror = function() { window.clearTimeout(timer); finish(); };
+      const p = audio.play();
+      if (p && p.catch) {
+        p.catch(function() {
+          window.clearTimeout(timer);
+          finish();
+        });
+      }
+    });
+  }
+
+  /* Guest stepper */
+  function updateGuests(n) {
+    guestCount = Math.max(1, Math.min(20, n));
+    guestDisplay.textContent = guestCount === 1 ? '1 Guest' : guestCount + ' Guests';
+    guestVal.value = guestCount;
+  }
+  decBtn.addEventListener('click', function() { updateGuests(guestCount - 1); });
+  incBtn.addEventListener('click', function() { updateGuests(guestCount + 1); });
+
+  function ensureEmojiRainLayer() {
+    if (emojiRainLayer) return emojiRainLayer;
+    emojiRainLayer = document.createElement('div');
+    emojiRainLayer.className = 'emoji-rain-layer';
+    document.body.appendChild(emojiRainLayer);
+    return emojiRainLayer;
+  }
+
+  function startThumbsDownShower() {
+    const layer = ensureEmojiRainLayer();
+    if (emojiRainTimer) return;
+    emojiRainTimer = window.setInterval(function() {
+      const drop = document.createElement('span');
+      drop.className = 'emoji-drop';
+      drop.textContent = '👎';
+      drop.style.left = Math.round(Math.random() * 96) + '%';
+      drop.style.fontSize = (1.1 + Math.random() * 1.2).toFixed(2) + 'rem';
+      drop.style.animationDuration = (1.6 + Math.random() * 1.2).toFixed(2) + 's';
+      layer.appendChild(drop);
+      window.setTimeout(function() { drop.remove(); }, 3200);
+    }, 95);
+  }
+
+  function stopThumbsDownShower() {
+    if (emojiRainTimer) {
+      window.clearInterval(emojiRainTimer);
+      emojiRainTimer = null;
+    }
+    if (emojiRainLayer) {
+      window.setTimeout(function() {
+        if (!emojiRainLayer) return;
+        emojiRainLayer.innerHTML = '';
+      }, 500);
+    }
+  }
+
+  chooseYes.addEventListener('click', async function() {
+    if (introChoiceLocked) return;
+    introChoiceLocked = true;
+    attendingVal.value = "Yes, I'll be there";
+    startConfettiShower();
+    await playAudioAndWait(happyAudioSrc, 2600);
+    stopConfettiShower();
+    showPage(pageYes);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    introChoiceLocked = false;
+  });
+
+  function applyNoScale() {
+    const scale = 1 - noScaleStep * 0.08;
+    chooseNo.style.transform = 'scale(' + Math.max(0.52, scale) + ')';
+  }
+
+  function startNoShrink() {
+    if (noShrinkTimer) return;
+    noScaleStep = Math.min(noScaleStep + 1, 6);
+    applyNoScale();
+    noShrinkTimer = window.setInterval(function() {
+      noScaleStep = Math.min(noScaleStep + 1, 6);
+      applyNoScale();
+      if (noScaleStep >= 6) {
+        window.clearInterval(noShrinkTimer);
+        noShrinkTimer = null;
+      }
+    }, 90);
+  }
+
+  function stopNoShrink() {
+    if (!noShrinkTimer) return;
+    window.clearInterval(noShrinkTimer);
+    noShrinkTimer = null;
+  }
+
+  chooseNo.addEventListener('mouseenter', startNoShrink);
+  chooseNo.addEventListener('mouseleave', stopNoShrink);
+
+  chooseNo.addEventListener('focus', function() {
+    noScaleStep = Math.min(noScaleStep + 1, 6);
+    applyNoScale();
+  });
+
+  chooseNo.addEventListener('click', async function() {
+    if (introChoiceLocked) return;
+    introChoiceLocked = true;
+    startThumbsDownShower();
+    await playAudioAndWait(sadAudioSrc, 3200);
+    stopThumbsDownShower();
+    showPage(pageNo);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    introChoiceLocked = false;
+  });
+
+  /* Ensure first-load background matches intro page */
+  document.body.classList.add('intro-view');
+  initDatePickers();
+  /* Confetti */
+  function startConfettiShower() {
+    const ctx = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const pal = ['#c9a96e','#d4af37','#9a2038','#d86880','#dca0b0','#fdf6ec','#0d1b2a'];
+    confettiActive = true;
+
+    function spawn() {
+      for (let i = 0; i < 4; i += 1) {
+        confettiBits.push({
+          x: Math.random() * canvas.width,
+          y: -10 - Math.random() * 50,
+          w: 5 + Math.random() * 8,
+          h: 4 + Math.random() * 5,
+          c: pal[Math.floor(Math.random() * pal.length)],
+          vy: 2.2 + Math.random() * 3.3,
+          vx: (Math.random() - 0.5) * 1.8,
+          a: Math.random() * 360,
+          spin: (Math.random() - 0.5) * 8
+        });
+      }
+    }
+
+    if (confettiRAF) return;
+    (function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (confettiActive) spawn();
+      confettiBits = confettiBits.filter(function(b) {
+        b.y += b.vy;
+        b.x += b.vx;
+        b.a += b.spin;
+        if (b.y >= canvas.height + 20) return false;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - b.y / (canvas.height * 0.96));
+        ctx.fillStyle = b.c;
+        ctx.translate(b.x, b.y);
+        ctx.rotate(b.a * Math.PI / 180);
+        ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+        ctx.restore();
+        return true;
+      });
+      if (confettiActive || confettiBits.length) {
+        confettiRAF = requestAnimationFrame(draw);
+      } else {
+        confettiRAF = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    })();
+  }
+
+  function stopConfettiShower() {
+    confettiActive = false;
+  }
+
+  function triggerConfetti() {
+    const ctx = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const pal = ['#c9a96e','#d4af37','#9a2038','#d86880','#dca0b0','#fdf6ec','#0d1b2a'];
+    const bits = Array.from({length: 120}, function() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height * 0.35 - 30,
+        w: 5 + Math.random() * 8, h: 4 + Math.random() * 5,
+        c: pal[Math.floor(Math.random() * pal.length)],
+        vy: 2.5 + Math.random() * 4, vx: (Math.random()-.5)*1.5,
+        a: Math.random()*360, spin: (Math.random()-.5)*8
+      };
+    });
+    (function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let live = false;
+      bits.forEach(function(b) {
+        b.y += b.vy; b.x += b.vx; b.a += b.spin;
+        if (b.y < canvas.height + 20) live = true;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - b.y / (canvas.height * 0.88));
+        ctx.fillStyle = b.c;
+        ctx.translate(b.x, b.y);
+        ctx.rotate(b.a * Math.PI/180);
+        ctx.fillRect(-b.w/2, -b.h/2, b.w, b.h);
+        ctx.restore();
+      });
+      if (live) requestAnimationFrame(draw);
+    })();
+  }
+
+  /* Form submission */
+  declineForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById('decline-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    declineForm.target = 'hidden-iframe';
+    declineForm.submit();
+    window.setTimeout(function() {
+      declineSuccess.classList.add('show');
+      submitBtn.textContent = 'Submitted';
+    }, 650);
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const evts = Array.from(form.querySelectorAll('.event-check input[type="checkbox"]')).filter(function(c) { return c.checked; });
+    if (!evts.length) { alert('Please select at least one event you will attend.'); return; }
+
+    const accGroup = document.getElementById('accommodation-section');
+    if (!Array.from(accGroup.querySelectorAll('input[type="radio"]')).some(function(r) { return r.checked; })) {
+      alert('Please indicate whether you need accommodation.'); return;
+    }
+
+    const sub = document.getElementById('btn-submit');
+    sub.disabled = true;
+    sub.querySelector('span').textContent = 'Sending...';
+
+    form.target = 'hidden-iframe';
+    form.submit();
+
+    setTimeout(function() {
+      formContent.classList.add('hide');
+      successMsg.classList.add('show');
+      triggerConfetti();
+    }, 800);
+  });
+})();
+</script>
+</body>
+</html>
+
+
