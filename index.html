@@ -438,6 +438,10 @@
       margin-top: 0.85rem;
     }
 
+    .decline-form.hide {
+      display: none;
+    }
+
     .decline-form .field-label {
       font-size: 0.78rem;
       margin-bottom: 0.5rem;
@@ -450,11 +454,12 @@
 
     .decline-success {
       display: none;
-      margin-top: 0.85rem;
+      margin-top: 0.6rem;
       text-align: center;
-      font-size: 1.08rem;
-      color: var(--text-mid);
-      font-weight: 600;
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      color: var(--navy);
+      font-weight: 700;
     }
 
     .decline-success.show {
@@ -816,17 +821,13 @@
     .success.show { display: block; animation: riseIn 0.6s ease both; }
     .form-content.hide { display: none; }
 
-    .success-glyph { font-size: 2rem; color: var(--gold); margin-bottom: 1.25rem; }
-
     .success h2 {
       font-family: 'Dancing Script', cursive;
       font-size: 3rem;
       font-weight: 700;
       color: var(--navy);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0;
     }
-
-    .success p { font-size: 1.12rem; color: var(--muted); font-style: italic; line-height: 1.8; }
 
     #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
 
@@ -1144,7 +1145,7 @@
               <div class="decline-submit-wrap">
                 <button type="submit" class="ghost-btn" id="decline-submit">Submit</button>
               </div>
-              <p id="decline-success" class="decline-success">Thank you for letting us know.</p>
+              <p id="decline-success" class="decline-success">Thank you!</p>
             </form>
           </div>
         </div>
@@ -1270,11 +1271,7 @@
 
         <!-- Success state -->
         <div class="success" id="successMsg">
-          <div class="success-glyph">✦</div>
           <h2>Thank you!</h2>
-          <p>Your RSVP has been received.<br>We look forward to celebrating with you.</p>
-          <div class="divider" style="margin-top:1.5rem"><span class="div-gem"></span></div>
-          <p class="footer-line" style="margin-top:1rem">Varuni &amp; Varun | April-May 2026</p>
         </div>
 
       </div>
@@ -1567,8 +1564,8 @@
     declineForm.target = 'hidden-iframe';
     declineForm.submit();
     window.setTimeout(function() {
+      declineForm.classList.add('hide');
       declineSuccess.classList.add('show');
-      submitBtn.textContent = 'Submitted';
     }, 650);
   });
 
