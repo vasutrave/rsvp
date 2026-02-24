@@ -407,19 +407,19 @@
 
     .page-no-title {
       text-align: center;
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 2.4rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.9rem;
       font-style: italic;
-      font-weight: 700;
+      font-weight: 300;
       color: var(--navy);
       margin-bottom: 1.1rem;
     }
 
     .decline-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 2.2rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.6rem;
       font-style: italic;
-      font-weight: 400;
+      font-weight: 300;
       color: var(--navy);
       margin-bottom: 0.55rem;
     }
@@ -449,9 +449,11 @@
 
     .ghost-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .decline-form { text-align: left; margin-top: 0.85rem; }
+    .decline-form { text-align: center; margin-top: 0.85rem; }
     .decline-form.hide { display: none; }
     .decline-form .field-label { font-size: 0.78rem; margin-bottom: 0.5rem; }
+    .decline-form input[type="text"],
+    .decline-form textarea { text-align: center; }
 
     .decline-submit-wrap { margin-top: 1rem; text-align: center; }
 
@@ -459,10 +461,10 @@
       display: none;
       margin-top: 0.6rem;
       text-align: center;
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 2.4rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.9rem;
       font-style: italic;
-      font-weight: 700;
+      font-weight: 300;
       color: var(--navy);
     }
     .decline-success.show { display: block; }
@@ -762,10 +764,10 @@
     .form-content.hide { display: none; }
 
     .success h2 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 2.4rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.9rem;
       font-style: italic;
-      font-weight: 700;
+      font-weight: 300;
       color: var(--navy);
       margin-bottom: 0.5rem;
     }
@@ -817,6 +819,15 @@
 
       /* Slightly compact event-check rows */
       .event-check label { padding: 0.58rem 0.75rem; }
+
+      /* Centre-align form labels and inputs on mobile */
+      .field-label { text-align: center; }
+      .date-tiny   { text-align: center; }
+      input[type="text"]  { text-align: center; padding-right: 0; }
+      input[type="date"]  { text-align: center; }
+      textarea            { text-align: center; }
+      /* Hide the decorative suffix icon when input text is centred */
+      .input-suffix { display: none; }
 
       /* Stack date pair into two rows */
       .date-pair { grid-template-columns: 1fr; }
@@ -1199,13 +1210,13 @@
     emojiRainTimer = window.setInterval(function () {
       var drop = document.createElement('span');
       drop.className = 'emoji-drop';
-      drop.textContent = '\uD83D\uDC4E'; /* 👎 */
+      drop.textContent = '\uD83D\uDE22'; /* 😢 */
       drop.style.left = Math.round(Math.random() * 96) + '%';
       drop.style.fontSize = (1.1 + Math.random() * 1.2).toFixed(2) + 'rem';
-      drop.style.animationDuration = (1.6 + Math.random() * 1.2).toFixed(2) + 's';
+      drop.style.animationDuration = (2.8 + Math.random() * 1.4).toFixed(2) + 's';
       layer.appendChild(drop);
-      window.setTimeout(function () { drop.remove(); }, 3200);
-    }, 95);
+      window.setTimeout(function () { drop.remove(); }, 5000);
+    }, 180);
   }
 
   function stopThumbsDownShower() {
