@@ -67,13 +67,7 @@
       opacity: 1;
     }
 
-    body.thankyou-view::after {
-      background-image: url("assets/third-page-bg.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 1;
-    }
+
 
     body.no-view::after {
       background-image: url("assets/second-page-bg.png");
@@ -1587,8 +1581,8 @@
     }).then(function () {
       formContent.classList.add('hide');
       successMsg.classList.add('show');
-      /* Switch to thank-you background and hide back button */
-      document.body.classList.remove('yes-view');
+      /* Keep yes-view so the body background stays intact; add thankyou-view
+         to trigger the card swap, centering, and back-button hide */
       document.body.classList.add('thankyou-view');
       /* Show personalised name in the success heading */
       if (nameVal) {
