@@ -325,7 +325,7 @@
       font-weight: 400;
       color: var(--navy);
       line-height: 1.25;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.55rem;
       white-space: nowrap;
     }
 
@@ -364,11 +364,6 @@
       background: rgba(22,56,95,0.92);
       border-color: rgba(22,56,95,0.92);
       color: var(--gold-lt);
-    }
-
-    #choose-no {
-      transition: transform 0.22s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-      transform-origin: center;
     }
 
     .invite-bottom-reply {
@@ -896,6 +891,80 @@
     @media (max-width: 380px) {
       .couple-names { font-size: clamp(2.8rem, 10vw, 3.4rem); }
     }
+
+    /* ── Confirmation modal ──────────────────────────────── */
+    .no-confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 18, 38, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+    .no-confirm-overlay.show { display: flex; }
+
+    .no-confirm-box {
+      background: #faf7f2;
+      border: 1px solid var(--gold);
+      max-width: 320px;
+      width: 100%;
+      padding: 2rem 1.6rem 1.6rem;
+      text-align: center;
+      animation: riseIn 0.35s ease both;
+    }
+
+    .no-confirm-question {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--navy);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .no-confirm-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .no-confirm-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.75rem 0.75rem;
+      cursor: pointer;
+      line-height: 1.45;
+      transition: all 0.2s ease;
+    }
+
+    .convinced-btn {
+      background: rgba(201,169,110,0.12);
+      border: 1px solid var(--gold);
+      color: var(--gold-dk);
+    }
+    .convinced-btn:hover, .convinced-btn:active {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    .regret-btn {
+      background: transparent;
+      border: 1px solid rgba(20,38,66,0.28);
+      color: var(--text-mid);
+    }
+    .regret-btn:hover, .regret-btn:active {
+      background: rgba(22,56,95,0.88);
+      border-color: rgba(22,56,95,0.88);
+      color: var(--gold-lt);
+    }
   </style>
 </head>
 <body>
@@ -930,7 +999,6 @@
         <div class="flow-page active" id="page-intro">
           <div class="invite-box">
             <h2 class="invite-title">Will you be joining us?</h2>
-            <p class="invite-sub">Please choose an option to continue</p>
             <div class="invite-actions">
               <button type="button" class="plain-choice" id="choose-yes">Yes, I will join</button>
               <button type="button" class="plain-choice" id="choose-no">No, I can't join</button>
@@ -1105,6 +1173,17 @@
 
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
+  <!-- Confirmation modal: shown when "No, I can't join" is tapped -->
+  <div id="no-confirm-overlay" class="no-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="no-confirm-title">
+    <div class="no-confirm-box">
+      <p class="no-confirm-question" id="no-confirm-title">Do you <em>really really really</em> want to miss the wedding?</p>
+      <div class="no-confirm-actions">
+        <button type="button" class="no-confirm-btn convinced-btn" id="confirm-convinced">No, you convinced me!</button>
+        <button type="button" class="no-confirm-btn regret-btn"    id="confirm-regret">Yes, I will live with the regret :(</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 (function () {
   'use strict';
@@ -1158,8 +1237,6 @@
 
   /* ── State ─────────────────────────────────────────────── */
   var guestCount       = 1;
-  var noScaleStep      = 0;
-  var noShrinkTimer    = null;
   var introChoiceLocked = false;
   var emojiRainTimer   = null;
   var emojiRainLayer   = null;
@@ -1311,40 +1388,9 @@
 
   function stopConfetti() { confettiActive = false; }
 
-  /* ── "No" button shrink ────────────────────────────────── */
-  function applyNoScale() {
-    var scale = 1 - noScaleStep * 0.08;
-    chooseNo.style.transform = 'scale(' + Math.max(0.52, scale) + ')';
-  }
-
-  function startNoShrink() {
-    if (noShrinkTimer) return;
-    noScaleStep = Math.min(noScaleStep + 1, 6);
-    applyNoScale();
-    noShrinkTimer = window.setInterval(function () {
-      noScaleStep = Math.min(noScaleStep + 1, 6);
-      applyNoScale();
-      if (noScaleStep >= 6) { window.clearInterval(noShrinkTimer); noShrinkTimer = null; }
-    }, 90);
-  }
-
-  function stopNoShrink() {
-    if (!noShrinkTimer) return;
-    window.clearInterval(noShrinkTimer);
-    noShrinkTimer = null;
-  }
-
-  /* Mouse (desktop) + touch (mobile) */
-  chooseNo.addEventListener('mouseenter',  startNoShrink);
-  chooseNo.addEventListener('mouseleave',  stopNoShrink);
-  chooseNo.addEventListener('touchstart',  startNoShrink, { passive: true });
-  chooseNo.addEventListener('touchend',    stopNoShrink);
-  chooseNo.addEventListener('focus', function () {
-    noScaleStep = Math.min(noScaleStep + 1, 6);
-    applyNoScale();
-  });
-
   /* ── Choice handlers ───────────────────────────────────── */
+  var noConfirmOverlay = document.getElementById('no-confirm-overlay');
+
   chooseYes.addEventListener('click', function () {
     if (introChoiceLocked) return;
     introChoiceLocked = true;
@@ -1357,13 +1403,33 @@
     });
   });
 
+  /* "No" now opens the confirmation modal instead of going straight to page 2 */
   chooseNo.addEventListener('click', function () {
     if (introChoiceLocked) return;
+    noConfirmOverlay.classList.add('show');
+  });
+
+  /* "Yes I will live with the regret" → sad shower + go to decline page */
+  document.getElementById('confirm-regret').addEventListener('click', function () {
+    noConfirmOverlay.classList.remove('show');
     introChoiceLocked = true;
     startThumbsDownShower();
     playAudioAndWait(sadAudioSrc, 3200).then(function () {
       stopThumbsDownShower();
       showPage(pageNo);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      introChoiceLocked = false;
+    });
+  });
+
+  /* "No you convinced me!" → confetti + happy audio + go to RSVP form */
+  document.getElementById('confirm-convinced').addEventListener('click', function () {
+    noConfirmOverlay.classList.remove('show');
+    introChoiceLocked = true;
+    confetti({ continuous: true });
+    playAudioAndWait(happyAudioSrc, 2600).then(function () {
+      stopConfetti();
+      showPage(pageYes);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       introChoiceLocked = false;
     });
