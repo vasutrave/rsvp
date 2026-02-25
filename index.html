@@ -60,11 +60,11 @@
 
     /* Per-view full-bleed backgrounds */
     body.intro-view::after {
-      background-image: url("assets/third-page-bg.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      opacity: 1;
+      background-image: url("assets/first-page-bg.png");
+      background-size: 560px auto;
+      background-position: center top;
+      background-repeat: repeat;
+      opacity: 0.95;
     }
 
 
@@ -1581,8 +1581,9 @@
     }).then(function () {
       formContent.classList.add('hide');
       successMsg.classList.add('show');
-      /* Keep yes-view so the body background stays intact; add thankyou-view
-         to trigger the card swap, centering, and back-button hide */
+      /* Remove yes-view so the base body::after (first-page-bg.png tiled)
+         takes over — add thankyou-view for card swap, centering, back-button hide */
+      document.body.classList.remove('yes-view');
       document.body.classList.add('thankyou-view');
       /* Show personalised name in the success heading */
       if (nameVal) {
