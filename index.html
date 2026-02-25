@@ -148,26 +148,19 @@
     /* Hide the form page entirely — back button, form etc — on thank-you */
     body.thankyou-view #page-yes { display: none; }
 
-    /* Make the card tall enough to fill the viewport */
-    body.thankyou-view .card { min-height: 82vh; }
+    /* Card and inner must be tall enough + relative for absolute child */
+    body.thankyou-view .card      { min-height: 80vh; }
+    body.thankyou-view .card-inner { min-height: 72vh; }
 
-    /* card-inner becomes a flex column so success can grow into remaining space */
-    body.thankyou-view .card-inner {
-      display: flex;
-      flex-direction: column;
-      min-height: 72vh;
-      padding-bottom: 2.5rem;
-    }
-
-    /* success grows to fill everything below the header and centres its children */
+    /* Absolutely position the thank-you text at 52% of card-inner height
+       so it sits in the visual centre of the card independent of the header */
     body.thankyou-view .success.show {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem 1.5rem;
-      min-height: 0;
+      position: absolute;
+      top: 52%;
+      left: 0; right: 0;
+      transform: translateY(-50%);
+      text-align: center;
+      padding: 0 1.8rem;
       animation: riseIn 0.6s ease both;
     }
 
