@@ -60,9 +60,17 @@
 
     /* Per-view full-bleed backgrounds */
     body.intro-view::after {
-      background-image: url("assets/mobile-fourth-page-form.png");
+      background-image: url("assets/first-page-bg.png");
       background-size: cover;
-      background-position: center top;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 1;
+    }
+
+    body.thankyou-view::after {
+      background-image: url("assets/first-page-bg.png");
+      background-size: cover;
+      background-position: center;
       background-repeat: no-repeat;
       opacity: 1;
     }
