@@ -1286,9 +1286,14 @@
 
   /* ── Guest stepper ─────────────────────────────────────── */
   function updateGuests(n) {
+    var prev = guestCount;
     guestCount = Math.max(1, Math.min(2, n));
     guestDisplay.textContent = guestCount === 1 ? '1 Guest' : guestCount + ' Guests';
     guestVal.value = guestCount;
+    if (guestCount === 2 && prev < 2) {
+      var gAudio = new Audio('assets/guests.mp3');
+      gAudio.play().catch(function () {});
+    }
   }
   decBtn.addEventListener('click', function () { updateGuests(guestCount - 1); });
   incBtn.addEventListener('click', function () { updateGuests(guestCount + 1); });
