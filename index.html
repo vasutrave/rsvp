@@ -137,10 +137,33 @@
       background-repeat: no-repeat;
     }
 
+    /* Thank-you state: separate background, no back button */
+    body.thankyou-view .card {
+      background-image: url("assets/mobile-fourth-page-form.png");
+      background-size: 100% 100%;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    /* Hide the form page entirely — back button, form etc — on thank-you */
+    body.thankyou-view #page-yes { display: none; }
+
+    /* Vertically centre the thank-you content in the remaining card space */
+    body.thankyou-view .success.show {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 52vh;
+      padding: 3rem 1.5rem;
+      animation: riseIn 0.6s ease both;
+    }
+
     body.intro-view .card-inner { padding-top: 5.6rem; }
 
     body.intro-view .header .reply-label { display: none; }
-    body.yes-view   .header .reply-label { display: none; }
+    body.yes-view      .header .reply-label { display: none; }
+    body.thankyou-view .header .reply-label { display: none; }
     body.no-view    .header              { display: none; }
     body.intro-view .header              { margin-bottom: 1.1rem; }
     body.no-view    .card-inner          { padding-top: 2.6rem; }
@@ -1480,6 +1503,9 @@
     }).then(function () {
       formContent.classList.add('hide');
       successMsg.classList.add('show');
+      /* Switch to thank-you background and hide back button */
+      document.body.classList.remove('yes-view');
+      document.body.classList.add('thankyou-view');
       /* Show personalised name in the success heading */
       if (nameVal) {
         var firstName = nameVal.split(' ')[0];
