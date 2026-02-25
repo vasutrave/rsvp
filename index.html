@@ -148,14 +148,26 @@
     /* Hide the form page entirely — back button, form etc — on thank-you */
     body.thankyou-view #page-yes { display: none; }
 
-    /* Vertically centre the thank-you content in the remaining card space */
+    /* Make the card tall enough to fill the viewport */
+    body.thankyou-view .card { min-height: 82vh; }
+
+    /* card-inner becomes a flex column so success can grow into remaining space */
+    body.thankyou-view .card-inner {
+      display: flex;
+      flex-direction: column;
+      min-height: 72vh;
+      padding-bottom: 2.5rem;
+    }
+
+    /* success grows to fill everything below the header and centres its children */
     body.thankyou-view .success.show {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 52vh;
-      padding: 3rem 1.5rem;
+      padding: 1rem 1.5rem;
+      min-height: 0;
       animation: riseIn 0.6s ease both;
     }
 
